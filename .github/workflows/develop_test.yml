@@ -1,10 +1,10 @@
 name: CI Tests Run
 
 on:
+  push:
+    branches: [ "main" ]
   pull_request:
-    # run just to develop branch
-    branches:
-      - develop
+    branches: [ "develop" ]
 
 jobs:
   run-tests:
@@ -12,17 +12,17 @@ jobs:
 
     steps:
       - name: Git Checkout
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
       - name: Config node.js
-        uses: actions/setup-node@v2
+      - uses: actions/setup-node@v2
 
         with:
 
-          node-version: '14'
+          node-version: '18'
 
       - name: Install dependencies
-        uses: npm install
+      - uses: npm install
 
       - name: Execute tests
-        uses: npm test
+      - uses: npm test
