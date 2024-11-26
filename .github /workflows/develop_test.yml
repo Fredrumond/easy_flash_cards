@@ -1,0 +1,28 @@
+name: CI Tests Run
+
+on:
+  pull_request:
+    # run just to develop branch
+    branches:
+      - develop
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v2
+
+      - name: Config node.js
+        uses: actions/setup-node@v2
+
+        with:
+
+          node-version: '14'
+
+      - name: Install dependencies
+        uses: npm install
+
+      - name: Execute tests
+        uses: npm test
