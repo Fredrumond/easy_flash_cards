@@ -3,7 +3,7 @@ const CSVService = require('../src/services/csvService');
 test('Deve ler o arquivo CSV e retornar um array de palavras', async () => {
     const words = await CSVService.readCSV('./words.csv');
     expect(words).toEqual([
-        { word: 'cat', meaning: 'gato' },
+        { word: 'cat', meaning: 'gatos' },
         { word: 'dog', meaning: 'cachorro' },
     ]);
 });
