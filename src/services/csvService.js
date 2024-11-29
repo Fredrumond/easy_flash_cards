@@ -19,7 +19,10 @@ class CSVService {
 
     static getRandomWord(words) {
         const randomIndex = Math.floor(Math.random() * words.length);
-        return words[randomIndex];
+        return {
+            word: words[randomIndex].word,
+            meaning: words[randomIndex].meaning
+        };
     }
 }
 
