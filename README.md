@@ -1,14 +1,41 @@
 # 🎯 Easy Flash Cards
 
 [![Node.js](https://img.shields.io/badge/Node.js-16+-green.svg)](https://nodejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-ISC-blue.svg)](LICENSE)
 [![Tests](https://img.shields.io/badge/Tests-Jest-yellow.svg)](https://jestjs.io/)
 
-> Uma aplicação CLI interativa para estudo de vocabulário através de flashcards
+> Uma aplicação CLI interativa para estudo de vocabulário através de flashcards, desenvolvida com TypeScript
 
 ## 📖 Sobre o Projeto
 
 Easy Flash Cards é uma ferramenta de linha de comando desenvolvida em Node.js que permite estudar vocabulário de forma interativa. O aplicativo carrega palavras e suas traduções de arquivos CSV e apresenta um sistema de flashcards com interface amigável no terminal.
+
+### 🔧 TypeScript
+
+Este projeto utiliza **TypeScript** para maior segurança de tipos e melhor experiência de desenvolvimento:
+
+- ✅ **Type Safety** - Detecção de erros em tempo de compilação
+- ✅ **IntelliSense** - Melhor autocomplete e navegação no código
+- ✅ **Refactoring Seguro** - Mudanças estruturais com confiança
+- ✅ **Self-Documenting** - Tipos servem como documentação
+
+#### 🎓 Para Iniciantes em TypeScript
+
+```typescript
+// Exemplo de interface (estrutura de dados)
+interface Word {
+  word: string;     // palavra em inglês
+  meaning: string;  // significado em português
+}
+
+// Exemplo de função tipada
+function findWord(words: Word[], search: string): Word | undefined {
+  return words.find(word => word.word === search);
+}
+```
+
+O código TypeScript é compilado para JavaScript antes da execução, garantindo compatibilidade total com Node.js.
 
 ### ✨ Funcionalidades
 
@@ -28,6 +55,7 @@ Easy Flash Cards é uma ferramenta de linha de comando desenvolvida em Node.js q
 
 - Node.js (versão 16 ou superior)
 - npm ou yarn
+- TypeScript (instalado automaticamente como dependência de desenvolvimento)
 
 ### Passos para instalação
 
@@ -47,6 +75,16 @@ Easy Flash Cards é uma ferramenta de linha de comando desenvolvida em Node.js q
    npm test
    ```
 
+4. **Compile o TypeScript (opcional - feito automaticamente)**
+   ```bash
+   npm run build
+   ```
+
+5. **Verifique os tipos TypeScript**
+   ```bash
+   npm run type-check
+   ```
+
 ## 📖 Como Usar
 
 ### 🖥️ Interface CLI
@@ -54,7 +92,11 @@ Easy Flash Cards é uma ferramenta de linha de comando desenvolvida em Node.js q
 #### Executando o aplicativo
 
 ```bash
+# JavaScript compilado (método padrão)
 node src/cli/cli.js <caminho-do-arquivo-csv>
+
+# TypeScript direto (desenvolvimento)
+npm run cli:ts <caminho-do-arquivo-csv>
 ```
 
 #### Exemplo de uso
@@ -66,8 +108,11 @@ node src/cli/cli.js cards.csv
 # Usando o arquivo de teste
 node src/cli/cli.js words.csv
 
-# Usando npm script
+# Usando npm script (JavaScript)
 npm run cli cards.csv
+
+# Usando npm script (TypeScript direto)
+npm run cli:ts cards.csv
 ```
 
 ### 🌐 API REST
@@ -75,11 +120,17 @@ npm run cli cards.csv
 #### Iniciando a API
 
 ```bash
-# Produção
+# JavaScript compilado (produção)
 npm start
 
-# Desenvolvimento (com auto-reload)
+# TypeScript direto (desenvolvimento)
+npm run start:ts
+
+# Desenvolvimento com auto-reload (JavaScript)
 npm run dev
+
+# Desenvolvimento com auto-reload (TypeScript)
+npm run dev:ts
 ```
 
 #### Endpoints disponíveis
@@ -133,18 +184,36 @@ Menu:
 
 ```
 easy_flash_cards/
-├── src/
+├── src/                         # Código-fonte TypeScript
+│   ├── api/
+│   │   └── server.ts           # Servidor da API REST
 │   ├── cli/
 │   │   └── cli.js              # Interface de linha de comando
-│   └── services/
-│       └── csvService.js        # Serviço para manipulação de CSV
+│   ├── services/
+│   │   └── csvService.ts       # Serviço para manipulação de CSV (TypeScript)
+│   └── types/
+│       ├── index.ts            # Definições de tipos
+│       └── csv-parser.d.ts     # Tipos customizados para csv-parser
+├── dist/                       # JavaScript compilado (gerado automaticamente)
+│   ├── services/
+│   │   └── csvService.js       # csvService compilado
+│   └── types/
+│       └── index.js            # Tipos compilados
 ├── tests/
-│   └── csvService.test.js       # Testes unitários
-├── cards.csv                    # Arquivo principal de vocabulário
-├── words.csv                    # Arquivo de teste
-├── package.json                 # Configurações do projeto
-└── README.md                    # Este arquivo
+│   └── csvService.test.js      # Testes unitários
+├── cards.csv                   # Arquivo principal de vocabulário
+├── words.csv                   # Arquivo de teste
+├── tsconfig.json               # Configuração do TypeScript
+├── package.json                # Configurações do projeto
+└── README.md                   # Este arquivo
 ```
+
+### 📋 Convenções de Arquivos
+
+- **`.ts`** - Arquivos TypeScript (código-fonte)
+- **`.js`** - Arquivos JavaScript (compilados ou legados)
+- **`.d.ts`** - Arquivos de definição de tipos TypeScript
+- **`dist/`** - Diretório com código JavaScript compilado
 
 ## 📊 Formato dos Arquivos CSV
 
@@ -160,6 +229,56 @@ especially,especialmente
 ### Colunas obrigatórias:
 - `word`: Palavra em inglês
 - `meaning`: Tradução em português
+
+## 🔧 Desenvolvimento
+
+### 📜 Scripts Disponíveis
+
+#### 🏗️ Build e Compilação
+```bash
+npm run build         # Compila TypeScript para JavaScript
+npm run build:watch   # Compila automaticamente quando arquivos mudam
+npm run type-check    # Verifica tipos sem gerar arquivos
+```
+
+#### 🚀 Execução
+```bash
+# CLI
+npm run cli           # Executa CLI em JavaScript
+npm run cli:ts        # Executa CLI em TypeScript direto
+
+# API
+npm start             # Inicia API em JavaScript (produção)
+npm run start:ts      # Inicia API em TypeScript direto
+npm run dev           # Desenvolvimento com auto-reload (JavaScript)
+npm run dev:ts        # Desenvolvimento com auto-reload (TypeScript)
+```
+
+#### 🧪 Testes
+```bash
+npm test              # Executa todos os testes (compila automaticamente)
+npm run test:watch    # Executa testes em modo watch
+```
+
+### 🔄 Workflow de Desenvolvimento
+
+#### Para desenvolvimento com TypeScript:
+```bash
+# Terminal 1: Compilação automática
+npm run build:watch
+
+# Terminal 2: Desenvolvimento
+npm run dev:ts        # ou npm run cli:ts
+
+# Terminal 3: Testes automáticos
+npm run test:watch
+```
+
+#### Para execução rápida:
+```bash
+npm test              # Compila e testa automaticamente
+npm run start:ts      # Executa direto sem compilar
+```
 
 ## 🧪 Testes
 
@@ -179,7 +298,9 @@ O projeto inclui testes para:
 ## 🛠️ Tecnologias Utilizadas
 
 - **Node.js** - Runtime JavaScript
+- **TypeScript** - Superset do JavaScript com tipagem estática
 - **Jest** - Framework de testes
+- **Express** - Framework web para API REST
 - **Chalk** - Biblioteca para cores no terminal
 - **csv-parser** - Parser para arquivos CSV
 
@@ -192,15 +313,34 @@ O projeto inclui testes para:
 - `express` ^4.21.1 - Framework web para API REST
 
 ### Desenvolvimento
+- `typescript` ^5.0.0 - Compilador TypeScript
+- `ts-node` ^10.9.0 - Execução direta de TypeScript
+- `ts-jest` ^29.0.0 - Preprocessor TypeScript para Jest
 - `jest` ^29.7.0 - Framework de testes
+- `@types/node` ^20.0.0 - Tipos do Node.js
+- `@types/express` ^4.17.17 - Tipos do Express
+- `@types/cors` ^2.8.13 - Tipos do CORS
+- `@types/jest` ^29.0.0 - Tipos do Jest
 
 ## 🤝 Contribuindo
 
+### 💡 Para Contribuidores
+
+Este projeto está em **migração ativa para TypeScript**. Ao contribuir:
+
+- ✅ **Novos arquivos**: Sempre em TypeScript (`.ts`)
+- ✅ **Código existente**: Pode manter JavaScript ou migrar para TS
+- ✅ **Testes**: Execute `npm run type-check` antes do commit
+- ✅ **Build**: Execute `npm test` para garantir que compila
+
+### 🔄 Processo de Contribuição
+
 1. Faça um fork do projeto
 2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
+3. **Importante**: Execute `npm run type-check` e `npm test`
+4. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+5. Push para a branch (`git push origin feature/AmazingFeature`)
+6. Abra um Pull Request
 
 ## 📝 Licença
 
@@ -208,12 +348,22 @@ Este projeto está sob a licença ISC. Veja o arquivo [LICENSE](LICENSE) para ma
 
 ## 🚀 Roadmap
 
-- [ ] Sistema de progresso e estatísticas
+### 🎯 Em Desenvolvimento
+- [x] **Migração para TypeScript** - ✅ Concluído
+- [x] **Build automático nos testes** - ✅ Concluído
+- [ ] Migrar CLI e API para TypeScript
+- [ ] Sistema de usuários com SQLite
+- [ ] Autenticação JWT
+
+### 🔮 Futuras Features
+- [ ] Sistema de progresso e estatísticas avançadas
 - [ ] Persistência de histórico de estudo
-- [ ] Validação de entrada do usuário
-- [ ] Sistema de logging
-- [ ] Interface web
+- [ ] Spaced repetition algorithm
+- [ ] Sistema de categorias e dificuldade
+- [ ] Interface web React/Vue
 - [ ] Suporte a múltiplos idiomas
+- [ ] Mobile app React Native
+- [ ] Gamificação e rankings
 
 ## 📞 Contato
 

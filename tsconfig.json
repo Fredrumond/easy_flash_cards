@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    // Versão do JavaScript que vai ser gerada
+    "target": "ES2020",
+    
+    // Sistema de módulos (como import/export funcionam)
+    "module": "commonjs",
+    
+    // Onde colocar os arquivos compilados (.js)
+    "outDir": "./dist",
+    
+    // Onde estão os arquivos TypeScript (.ts)
+    "rootDir": "./src",
+    
+    // Permite usar import/export com require()
+    "esModuleInterop": true,
+    
+    // Mais rigoroso (te ajuda a escrever código melhor)
+    "strict": true,
+    
+    // Resolve caminhos de módulos como Node.js
+    "moduleResolution": "node",
+    
+    // Inclui tipos do Node.js automaticamente
+    "types": ["node", "jest"]
+  },
+  
+  // Quais arquivos incluir
+  "include": [
+    "src/**/*"
+  ],
+  
+  // Quais arquivos ignorar
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+} 
