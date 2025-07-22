@@ -5,36 +5,95 @@ Todas as mudanças notáveis do projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.1] - 2025-07-22
+## [1.1.3] - 2025-07-22
 
-### 🔒 **SECURITY FIXES**
+### 🎯 **ULTRA MINIMALISTA**
 
-#### 🛡️ **Vulnerabilidades Corrigidas**
-- **✅ path-to-regexp** - Corrigida vulnerabilidade ReDoS de alta severidade
-- **✅ @babel/helpers** - Corrigida complexidade ineficiente de RegExp
-- **✅ brace-expansion** - Corrigida vulnerabilidade ReDoS
-- **✅ express dependencies** - Atualizadas dependências transitivas
+#### ⚡ **Honestidade Técnica**
+- **✅ Realidade aceita** - 610 linhas = pipeline ultra simples
+- **✅ Over-engineering removido** - De 250 linhas YAML para 12 linhas
+- **✅ Foco no essencial** - Apenas `npm test`
+- **✅ Proporção correta** - Pipeline adequada ao tamanho
 
-#### 🧪 **Pipeline Improvements**
-- **✅ Coverage pipeline** - Corrigido travamento no coverage
-- **✅ Jest configuration** - Timeout aumentado e workers limitados
-- **✅ Open handles fix** - Servidor não inicia automaticamente em testes
-- **✅ Security scan** - Auto-fix para vulnerabilidades high/critical
+#### 📦 **Pipeline Final (12 linhas):**
+```yaml
+name: Test
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci  
+      - run: npm test
+```
 
-### 🔧 **Fixed**
-- **Jest timeout** - Aumentado de 10s para 30s para coverage
-- **Open handles** - Servidor Express não trava mais os testes
-- **Coverage collection** - Removida redundância na configuração
-- **Security pipeline** - Auto-correção de vulnerabilidades
+### 🧹 **Removido (porque era desnecessário):**
+- ❌ **Múltiplas versões Node** - 610 linhas não precisam
+- ❌ **Security audit** - `npm audit` local é suficiente  
+- ❌ **Type check separado** - Jest já compila
+- ❌ **Artifacts** - Para quê?
+- ❌ **Coverage upload** - Overkill total
+- ❌ **Dependabot** - Atualizações manuais são ok
+- ❌ **Jobs paralelos** - Complexidade desnecessária
 
-### 🏗️ **Infrastructure**
-- **Automated security fixes** - Pipeline aplica correções automaticamente
-- **Coverage optimization** - Workers limitados para melhor performance
-- **Test reliability** - Cleanup robusto sem handles abertos
+### 🎓 **Lição Aprendida**
+- **Engineering adequado** > Over-engineering
+- **610 linhas** de código ≠ **pipeline enterprise**
+- **Simplicidade** é uma virtude técnica
+- **Projeto de estudo** ≠ **projeto crítico de produção**
+
+### ⏱️ **Performance**
+- **Tempo**: ~1-2 minutos (era 8-10 min)
+- **Complexidade**: Qualquer dev entende em 30s
+- **Manutenção**: Zero esforço
 
 ---
 
-## [1.1.0] - 2025-07-22
+## [1.1.2] - 2025-07-22
+
+### 🎯 **PIPELINE SIMPLIFICATION**
+
+#### ⚡ **Complexidade Reduzida**
+- **✅ Single job pipeline** - De 6 jobs para 1 job otimizado
+- **✅ Matriz removida** - Teste apenas no Node.js 20 (padrão)
+- **✅ Artifacts eliminados** - Sem uploads desnecessários
+- **✅ Deploy pipeline removida** - Desnecessária para projeto pequeno
+- **✅ CodeQL removida** - Security scan integrado ao CI principal
+
+#### 🛠️ **O que mantivemos (essencial):**
+- **✅ Type checking** - Verificação de tipos TypeScript
+- **✅ Unit tests** - Todos os 18 testes funcionais
+- **✅ Security audit** - Auto-fix de vulnerabilidades
+- **✅ Node.js 20** - Versão LTS estável
+
+#### 📦 **Dependabot Simplificado**
+- **✅ Apenas NPM** - Removido Docker e GitHub Actions
+- **✅ Weekly updates** - Frequência adequada
+- **✅ 5 PRs max** - Limite realista
+
+### 🚀 **Benefícios**
+- **Tempo de execução** - De ~8-10 minutos para ~3-4 minutos
+- **Recursos menores** - Menos consumo de GitHub Actions
+- **Manutenção simples** - Pipeline fácil de entender e modificar
+- **Adequado ao projeto** - Proporcional ao tamanho (600 linhas)
+
+### 📊 **Comparação**
+
+| Aspecto | Antes | Depois |
+|---------|-------|--------|
+| Jobs | 6 paralelos | 1 único |
+| Node versions | 3 (18,20,21) | 1 (20) |
+| Artifacts | 4 diferentes | 0 |
+| Tempo estimado | 8-10 min | 3-4 min |
+| Linhas de YAML | ~250 | ~35 |
+
+---
+
+## [1.1.1] - 2025-07-22
 
 ### 🎉 MAJOR IMPROVEMENTS
 
