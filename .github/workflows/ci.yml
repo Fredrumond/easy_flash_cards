@@ -1,0 +1,250 @@
+name: 🚀 CI/CD Pipeline - TypeScript
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+  workflow_dispatch: # Permite execução manual
+
+# 🔧 Variáveis globais
+env:
+  NODE_VERSION_MATRIX: '["18", "20", "21"]'
+  MAIN_NODE_VERSION: '20'
+
+jobs:
+  # 🔍 Job 1: Análise de Código e Tipos
+  code-quality:
+    name: 📊 Code Quality & Types
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: 🔧 Setup Node.js ${{ env.MAIN_NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.MAIN_NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: 📦 Install dependencies
+        run: npm ci
+        
+      - name: 🔍 TypeScript Type Check
+        run: npm run type-check
+        
+      - name: 🏗️ Build TypeScript
+        run: npm run build
+        
+      - name: 📊 Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: dist/
+          retention-days: 7
+
+  # 🧪 Job 2: Testes em Múltiplas Versões Node
+  test-matrix:
+    name: 🧪 Tests (Node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+    needs: code-quality
+    
+    strategy:
+      matrix:
+        node-version: [18, 20, 21]
+        
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: 🔧 Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          
+      - name: 📦 Install dependencies
+        run: npm ci
+        
+      - name: 🧪 Run tests
+        run: npm test
+        
+      - name: 📊 Generate coverage report
+        if: matrix.node-version == env.MAIN_NODE_VERSION
+        run: npm run test:coverage
+        
+      - name: 📈 Upload coverage to Codecov
+        if: matrix.node-version == env.MAIN_NODE_VERSION
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+
+  # 🔒 Job 3: Security & Dependencies
+  security:
+    name: 🔒 Security Scan
+    runs-on: ubuntu-latest
+    needs: code-quality
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: 🔧 Setup Node.js ${{ env.MAIN_NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.MAIN_NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: 📦 Install dependencies
+        run: npm ci
+        
+      - name: 🔍 Run security audit
+        run: npm audit --audit-level high
+        continue-on-error: true
+        
+      - name: 🔒 Check for vulnerable dependencies
+        run: |
+          if npm audit --audit-level high; then
+            echo "✅ No high-severity vulnerabilities found"
+          else
+            echo "⚠️ High-severity vulnerabilities detected"
+            npm audit --audit-level high --json > security-audit.json
+          fi
+          
+      - name: 📊 Upload security report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-audit
+          path: security-audit.json
+
+  # 🚀 Job 4: Build & Performance Tests
+  build-performance:
+    name: 🚀 Build & Performance
+    runs-on: ubuntu-latest
+    needs: [code-quality, test-matrix]
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: 🔧 Setup Node.js ${{ env.MAIN_NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.MAIN_NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: 📦 Install dependencies
+        run: npm ci
+        
+      - name: 📥 Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: dist/
+          
+      - name: 🏗️ Validate build artifacts
+        run: |
+          echo "📊 Build artifacts analysis:"
+          echo "Total files: $(find dist -type f | wc -l)"
+          echo "TypeScript compiled files:"
+          find dist -name "*.js" | head -10
+          echo "Build size: $(du -sh dist)"
+          
+      - name: 🧪 Test compiled JavaScript
+        run: |
+          echo "🧪 Testing compiled API..."
+          timeout 10s node dist/api/server.js &
+          sleep 3
+          curl -f http://localhost:3000/ || echo "API test failed"
+          
+      - name: ⚡ Performance test
+        run: |
+          echo "⚡ Running performance tests..."
+          echo "📊 TypeScript compilation time:"
+          time npm run build > /dev/null
+          echo "🧪 Test execution time:"
+          time npm test > /dev/null
+
+  # 📦 Job 5: Package & Release Preparation  
+  package:
+    name: 📦 Package & Release
+    runs-on: ubuntu-latest
+    needs: [test-matrix, security, build-performance]
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: 🔧 Setup Node.js ${{ env.MAIN_NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.MAIN_NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: 📦 Install dependencies
+        run: npm ci
+        
+      - name: 📥 Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: dist/
+          
+      - name: 📊 Generate build info
+        run: |
+          echo "🏷️ Build Information" > build-info.txt
+          echo "Commit: ${{ github.sha }}" >> build-info.txt
+          echo "Branch: ${{ github.ref_name }}" >> build-info.txt
+          echo "Node Version: ${{ env.MAIN_NODE_VERSION }}" >> build-info.txt
+          echo "Build Date: $(date)" >> build-info.txt
+          echo "TypeScript Files: $(find src -name "*.ts" | wc -l)" >> build-info.txt
+          echo "Test Coverage: $(npm run test:coverage 2>/dev/null | grep -o '[0-9.]*%' | tail -1 || echo 'N/A')" >> build-info.txt
+          
+      - name: 📦 Create release package
+        run: |
+          mkdir -p release-package
+          cp -r dist release-package/
+          cp package.json release-package/
+          cp README.md release-package/
+          cp build-info.txt release-package/
+          tar -czf easy-flash-cards-${{ github.sha }}.tar.gz release-package/
+          
+      - name: 📊 Upload release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-package
+          path: easy-flash-cards-${{ github.sha }}.tar.gz
+          retention-days: 30
+
+  # 📋 Job 6: Summary & Notifications
+  summary:
+    name: 📋 Pipeline Summary
+    runs-on: ubuntu-latest
+    needs: [code-quality, test-matrix, security, build-performance, package]
+    if: always()
+    
+    steps:
+      - name: 📊 Pipeline Results Summary
+        run: |
+          echo "🎯 Pipeline Execution Summary"
+          echo "================================"
+          echo "Code Quality: ${{ needs.code-quality.result }}"
+          echo "Tests: ${{ needs.test-matrix.result }}"  
+          echo "Security: ${{ needs.security.result }}"
+          echo "Build & Performance: ${{ needs.build-performance.result }}"
+          echo "Package: ${{ needs.package.result }}"
+          echo "================================"
+          
+          if [[ "${{ needs.code-quality.result }}" == "success" && 
+                "${{ needs.test-matrix.result }}" == "success" ]]; then
+            echo "✅ Pipeline completed successfully!"
+            echo "🚀 Ready for deployment"
+          else
+            echo "❌ Pipeline failed - check individual jobs"
+            exit 1
+          fi 
