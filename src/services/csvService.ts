@@ -1,5 +1,7 @@
 // 📚 IMPORTS com TypeScript
 import * as fs from 'fs';
+import * as path from 'path';
+const ROOT_DIR = path.resolve(__dirname, '../../data');
 import csvParser from 'csv-parser';
 import { Word, Stats } from '../types';
 
@@ -14,6 +16,10 @@ class CSVService {
     // filePath: string = parâmetro deve ser string
     // Promise<Word[]> = retorna uma Promise com array de Words
     static async readCSV(filePath: string): Promise<Word[]> {
+        filePath = path.resolve(ROOT_DIR, filePath);
+        if (!filePath.startsWith(ROOT_DIR)) {
+            throw new Error('Invalid file path');
+        }
         return new Promise((resolve, reject) => {
             const results: Word[] = []; // 📚 results é um array de Word
             
@@ -30,6 +36,10 @@ class CSVService {
 
     // 📚 CONCEITO: Função tipada simples
     static async writeCSV(filePath: string, words: Word[]): Promise<void> {
+        filePath = path.resolve(ROOT_DIR, filePath);
+        if (!filePath.startsWith(ROOT_DIR)) {
+            throw new Error('Invalid file path');
+        }
         // Promise<void> = não retorna nada, apenas resolve
         return new Promise((resolve, reject) => {
             const csvContent: string = this.convertToCSV(words);

@@ -2,6 +2,8 @@
 // Migração completa com tipagem robusta
 
 import express, { Request, Response, NextFunction, Application } from 'express';
+import * as path from 'path';
+const ROOT_DIR = path.resolve(__dirname, '../../data');
 import cors from 'cors';
 import CSVService from '../services/csvService';
 import { 
@@ -117,7 +119,14 @@ app.get('/api/words/:word', async (
 ): Promise<void> => {
     try {
         const { word }: WordParams = req.params;
-        const filePath: string = req.query.file || 'cards.csv';
+        const filePath: string = path.resolve(ROOT_DIR, req.query.file || 'cards.csv');
+        if (!filePath.startsWith(ROOT_DIR)) {
+            res.status(400).json({
+                success: false,
+                error: 'Invalid file path'
+            });
+            return;
+        }
         const words = await CSVService.readCSV(filePath);
         
         const foundWord = CSVService.findWord(words, word);
