@@ -32,7 +32,8 @@ app.use(express.urlencoded({ extended: true }));
 
 // 📝 Middleware de logging tipado
 app.use((req: Request, res: Response, next: NextFunction): void => {
-    console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+    const sanitizedPath = req.path.replace(/\n|\r/g, "");
+    console.log(`${new Date().toISOString()} - ${req.method} ${sanitizedPath}`);
     next();
 });
 
