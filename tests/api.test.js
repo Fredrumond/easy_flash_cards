@@ -6,10 +6,17 @@ const app = require('../dist/api/server').default;
 
 describe('🌐 API REST - Easy Flash Cards', () => {
     
-    // 🔧 Cleanup para evitar Jest pendurado
-    afterAll((done) => {
-        // Fecha todas as conexões abertas
-        setTimeout(() => done(), 100);
+    // 🔧 Setup e cleanup para evitar Jest pendurado
+    beforeAll(() => {
+        // Setup adicional se necessário
+    });
+    
+    afterAll(async () => {
+        // Cleanup mais robusto - sem necessidade de fechar servidor
+        // pois não está sendo iniciado nos testes
+        
+        // Aguarda cleanup adicional
+        await new Promise(resolve => setTimeout(resolve, 100));
     });
     
     // 📋 Teste da rota raiz

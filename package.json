@@ -1,12 +1,13 @@
 {
   "name": "easy_flash_cards",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "npm run build && jest",
     "test:watch": "npm run build && jest --watch",
-    "test:coverage": "npm run build && jest --coverage",
+    "test:coverage": "npm run build && jest --coverage --maxWorkers=2",
+    "test:coverage:debug": "npm run build && jest --coverage --maxWorkers=1 --verbose --detectOpenHandles",
     "test:coverage:open": "npm run test:coverage && open coverage/lcov-report/index.html",
     "start": "node src/api/server.js",
     "start:ts": "ts-node src/api/server.ts",

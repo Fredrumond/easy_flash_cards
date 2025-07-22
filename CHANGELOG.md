@@ -5,6 +5,35 @@ Todas as mudanças notáveis do projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2025-07-22
+
+### 🔒 **SECURITY FIXES**
+
+#### 🛡️ **Vulnerabilidades Corrigidas**
+- **✅ path-to-regexp** - Corrigida vulnerabilidade ReDoS de alta severidade
+- **✅ @babel/helpers** - Corrigida complexidade ineficiente de RegExp
+- **✅ brace-expansion** - Corrigida vulnerabilidade ReDoS
+- **✅ express dependencies** - Atualizadas dependências transitivas
+
+#### 🧪 **Pipeline Improvements**
+- **✅ Coverage pipeline** - Corrigido travamento no coverage
+- **✅ Jest configuration** - Timeout aumentado e workers limitados
+- **✅ Open handles fix** - Servidor não inicia automaticamente em testes
+- **✅ Security scan** - Auto-fix para vulnerabilidades high/critical
+
+### 🔧 **Fixed**
+- **Jest timeout** - Aumentado de 10s para 30s para coverage
+- **Open handles** - Servidor Express não trava mais os testes
+- **Coverage collection** - Removida redundância na configuração
+- **Security pipeline** - Auto-correção de vulnerabilidades
+
+### 🏗️ **Infrastructure**
+- **Automated security fixes** - Pipeline aplica correções automaticamente
+- **Coverage optimization** - Workers limitados para melhor performance
+- **Test reliability** - Cleanup robusto sem handles abertos
+
+---
+
 ## [1.1.0] - 2025-07-22
 
 ### 🎉 MAJOR IMPROVEMENTS

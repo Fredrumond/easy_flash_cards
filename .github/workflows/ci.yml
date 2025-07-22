@@ -73,6 +73,7 @@ jobs:
       - name: 📊 Generate coverage report
         if: matrix.node-version == env.MAIN_NODE_VERSION
         run: npm run test:coverage
+        timeout-minutes: 10
         
       - name: 📈 Upload coverage to Codecov
         if: matrix.node-version == env.MAIN_NODE_VERSION
@@ -81,6 +82,7 @@ jobs:
           file: ./coverage/lcov.info
           flags: unittests
           name: codecov-umbrella
+          fail_ci_if_error: false
 
   # 🔒 Job 3: Security & Dependencies
   security:
@@ -101,25 +103,48 @@ jobs:
       - name: 📦 Install dependencies
         run: npm ci
         
-      - name: 🔍 Run security audit
-        run: npm audit --audit-level high
-        continue-on-error: true
-        
-      - name: 🔒 Check for vulnerable dependencies
+      - name: �� Run security audit (high/critical only)
         run: |
-          if npm audit --audit-level high; then
-            echo "✅ No high-severity vulnerabilities found"
+          echo "🔒 Running security audit..."
+          if npm audit --audit-level high --json > audit-report.json 2>/dev/null; then
+            echo "✅ No high/critical vulnerabilities found"
           else
-            echo "⚠️ High-severity vulnerabilities detected"
-            npm audit --audit-level high --json > security-audit.json
+            echo "⚠️ High/critical vulnerabilities detected"
+            echo "📊 Audit Summary:"
+            npm audit --audit-level high || true
+            echo ""
+            echo "🔧 Attempting automatic fixes..."
+            if npm audit fix --audit-level high; then
+              echo "✅ Auto-fix successful"
+            else
+              echo "❌ Manual intervention required"
+              exit 1
+            fi
+          fi
+          
+      - name: 📊 Generate security report
+        if: always()
+        run: |
+          echo "# 🔒 Security Audit Report" > SECURITY_REPORT.md
+          echo "**Date:** $(date)" >> SECURITY_REPORT.md
+          echo "**Node Version:** ${{ env.MAIN_NODE_VERSION }}" >> SECURITY_REPORT.md
+          echo "" >> SECURITY_REPORT.md
+          echo "## Audit Results" >> SECURITY_REPORT.md
+          if [ -f audit-report.json ]; then
+            echo "\`\`\`json" >> SECURITY_REPORT.md
+            cat audit-report.json >> SECURITY_REPORT.md
+            echo "\`\`\`" >> SECURITY_REPORT.md
+          else
+            echo "✅ No high/critical vulnerabilities found" >> SECURITY_REPORT.md
           fi
           
       - name: 📊 Upload security report
-        if: failure()
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: security-audit
-          path: security-audit.json
+          name: security-report
+          path: SECURITY_REPORT.md
+          retention-days: 30
 
   # 🚀 Job 4: Build & Performance Tests
   build-performance:

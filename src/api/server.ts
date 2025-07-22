@@ -228,16 +228,24 @@ app.use('*', (req: Request, res: Response<ErrorResponse>): void => {
     });
 });
 
-// 🚀 Iniciar servidor
-app.listen(PORT, (): void => {
-    console.log(`🚀 Easy Flash Cards API rodando na porta ${PORT}`);
-    console.log(`📖 Documentação: http://localhost:${PORT}`);
-    console.log(`🎯 Endpoints disponíveis:`);
-    console.log(`   GET  /api/words`);
-    console.log(`   GET  /api/words/random`);
-    console.log(`   GET  /api/words/:word`);
-    console.log(`   POST /api/words`);
-    console.log(`   GET  /api/stats`);
-});
+// 🚀 Função para iniciar servidor (apenas se executado diretamente)
+export function startServer() {
+    return app.listen(PORT, () => {
+        console.log(`🚀 Easy Flash Cards API rodando na porta ${PORT}`);
+        console.log(`📖 Documentação: http://localhost:${PORT}`);
+        console.log(`🎯 Endpoints disponíveis:`);
+        console.log(`    GET  /api/words`);
+        console.log(`    GET  /api/words/random`);
+        console.log(`    GET  /api/words/:word`);
+        console.log(`    POST /api/words`);
+        console.log(`    GET  /api/stats`);
+    });
+}
 
+// 🚀 Iniciar servidor apenas se executado diretamente
+if (require.main === module) {
+    startServer();
+}
+
+// Exportar app para testes
 export default app; 
