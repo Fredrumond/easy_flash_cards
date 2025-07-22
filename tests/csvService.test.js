@@ -1,4 +1,8 @@
-const CSVService = require('../src/services/csvService');
+// 📚 CONCEITO: Migração gradual
+// Teste em JavaScript, mas usando o código TypeScript!
+// Esta é uma estratégia segura de migração
+
+const CSVService = require('../dist/services/csvService').default;
 const fs = require('fs');
 const path = require('path');
 
@@ -75,4 +79,4 @@ test('Deve retornar estatísticas vazias para array vazio', () => {
         averageWordLength: 0,
         averageMeaningLength: 0
     });
-});
+}); 
